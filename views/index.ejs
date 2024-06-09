@@ -1,0 +1,17 @@
+<%- include("partials/header.ejs") %>
+<main>
+  <div class="container">
+    <% if (locals.posts) { %>
+    <% posts.forEach((element, i) => { %>
+      <div onclick="openPost(' <%= element[`id`] %> ')" class="post clickable">
+        <h2>
+          <%= element["title"] %>
+        </h2>
+        <p>
+          <%= element["content"] %>
+        </p>
+      </div>
+    <% })} %>
+  </div>
+</main>
+<%- include("partials/footer.ejs") %>

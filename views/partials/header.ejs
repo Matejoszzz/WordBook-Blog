@@ -1,0 +1,30 @@
+<!-- MAKE SURE HTML AND BODY TAGS ARE NOT CLOSED -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <title>WordBook Blog</title>
+</head>
+
+<body>
+  <header>
+    <div class="title">
+      <h1>Wordbook Blog</h1>
+    </div>
+    <nav>
+      <div class="nav-title">
+          <i class="fa-solid fa-book"></i>
+          <span>WBB</span>
+        <hr>
+      </div>
+      <div onclick="homePage()" class="button">Home</div>
+      <div onclick="aboutPage()" class="button">About</div>
+      <div onclick="postPage()" class="button">Post</div>
+    </nav>
+  </header>
