@@ -53,6 +53,20 @@ app.post("/submit", (req, res) => {
   res.redirect("/");
 });
 
+app.post("/edit", (req, res) => {
+  console.log(req.body);
+  postsData.forEach((post) => {
+    if (post["id"] == req.body["postID"]) {
+      post["title"] = req.body["postTitle"]
+      post["content"] = req.body["postBody"]
+    }
+  });
+  // let newPost = new BlogPost(req.body["postTitle"], req.body["postBody"]);
+  // postsData.unshift(newPost);
+  // savePostsData();
+  res.redirect("/");
+});
+
 app.delete("/singlePost?", (req, res) => {
   console.log("Deleting..." + req.query["id"]);
   postsData.forEach((element, i) => {
@@ -79,6 +93,16 @@ app.get("/about", (req, res) => {
 
 app.get("/post", (req, res) => {
   res.render("post.ejs");
+});
+
+app.get("/editPost?", (req, res) => {
+  let postData;
+  postsData.forEach((element) => {
+    if (element["id"] == req.query["id"]) {
+      postData = element;
+    }
+  });
+  res.render("post.ejs", { post: postData });
 });
 
 app.get("/", (req, res) => {

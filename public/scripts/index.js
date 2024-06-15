@@ -17,6 +17,11 @@ function postPage() {
   window.location.href = newLoc;
 }
 
+function editPost(id) {
+  var newLoc = "/editPost?id=" + id.trim();
+  window.location.href = newLoc;
+}
+
 function deletePost(id) {
   if (confirm("Do you want to delete this post?")) {
     var newLoc = "/singlePost?id=" + id.trim();

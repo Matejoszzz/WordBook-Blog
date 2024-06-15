@@ -2,11 +2,12 @@
 
 <main>
     <div class="container">
-        <div class="newPost post">
-            <form action="/submit" method="post">
-                <input name="postTitle" id="postTitle" type="text" placeholder="Post title">
-                <textarea name="postBody" id="postBody" placeholder="Type your post"></textarea>
-                <input id="postSubmit" type="submit" value="POST!">
+        <div class="newPost post single">
+            <form action="<%= locals.post ? '/edit' : '/submit' %>" method="post">
+                <input type="number" name="postID" value="<%= locals.post ? post['id'] : "" %>" hidden>
+                <h2><input name="postTitle" id="postTitle" type="text" placeholder="Post title" autocomplete="off" value="<%= locals.post ? post["title"] : '' %>"></h2>
+                <p><textarea name="postBody" id="postBody" placeholder="Type your post"><%= locals.post ? post["content"] : '' %></textarea></p>
+                <div class="postFooter"><input class="button" id="postSubmit" type="submit" value="<%= locals.post ? 'EDIT!' : 'POST!' %>"></div>
             </form>
         </div>
     </div>

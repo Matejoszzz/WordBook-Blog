@@ -11,6 +11,7 @@ body {
   margin: 0px;
 }
 
+/* Header styling */
 header {
   grid-area: 1 / 1 / 3 / 3;
   display: grid;
@@ -28,13 +29,6 @@ header {
 h1 {
   color: white;
   margin: 0px;
-}
-
-h2 {
-  margin: 0px;
-  background-color: #fe7a36;
-  color: white;
-  padding: 1% 3%;
 }
 
 a {
@@ -58,23 +52,8 @@ nav {
   text-align: center;
 }
 
-.button {
-  height: 2.5rem;
-  background-color: #3652ad;
-  color: white;
-  text-align: center;
-  vertical-align: middle;
-  line-height: 2.5rem;
-  transition-duration: 0.4s;
-}
-
 nav .button {
   width: 100%;
-}
-
-.button:hover {
-  cursor: pointer;
-  background-color: #280274;
 }
 
 nav .button:hover{
@@ -104,8 +83,35 @@ main > .container {
   display: none;
 }
 
+/* posts styling */
+h2 {
+  flex: 1;
+  margin: 0px;
+  background-color: #fe7a36;
+  color: white;
+  font-size: 2rem;
+  padding: 1% 3%;
+}
+
+.button {
+  height: 2.5rem;
+  background-color: #3652ad;
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 2.5rem;
+  transition-duration: 0.4s;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #280274;
+}
+
 .post {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 95%;
   height: 100%;
   position: relative;
   border-radius: 1.5rem;
@@ -134,17 +140,17 @@ main > .container {
 }
 
 .post p {
+  flex: 3;
   margin: 3%;
   font-family: serif;
   color: black;
 }
 
 .postFooter {
+  flex: 1;
   display: flex;
   flex-direction: row;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
+  width: 94%;
   padding: 3%;
   justify-content: space-around;
   align-items: center;
@@ -162,7 +168,6 @@ main > .container {
   font-size: 2rem;
   color: #280274;
   justify-content: space-around;
-  /* padding: 0% 5%; */
 }
 
 .fa-circle-up, .fa-circle-down{
@@ -171,45 +176,30 @@ main > .container {
 
 /* posting page */
 
-.container .newPost {
-  height: 100%;
-  width: 100% !important;
-  padding: 0% !important;
-  grid-area: span 2;
-}
-
 .newPost > form {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-#postTitle {
-  margin: 0%;
-  padding: 0% 5%;
-  flex: 1;
-  background-color: #fe7a36;
-  font-size: 2rem;
-  color: white;
-}
-
-#postBody {
-  padding: 0% 5%;
-  flex: 3;
-  align-items: start;
-  font-size: 1rem;
-}
-
-::placeholder {
-  font-size: inherit;
+.newPost > form > * > *{
+  height: 100%;
+  width: 100%;
+  background-color: inherit;
+  border: 0;
+  font: inherit;
   color: inherit;
-  opacity: 0.8;
+  resize: none;
 }
 
 #postSubmit {
-  font-size: 32px;
-  padding: 0% 5%;
-  flex: 1;
+  background-color: #3652ad;
+}
+
+::placeholder {
+  font: inherit;
+  color: inherit;
+  opacity: 0.8;
 }
 
 @media only screen and (max-width: 600px) {

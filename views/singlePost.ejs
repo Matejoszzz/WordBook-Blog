@@ -15,7 +15,7 @@
           <span> <%= post["karma"] %> </span>
           <i class="fa-regular fa-circle-down clickable"></i>
         </div>
-        <div class="button clickable edit">Edit</div>
+        <div onclick="editPost('<%= post[`id`] %>')" class="button clickable edit">Edit</div>
         <div onclick="deletePost('<%= post[`id`] %>')" class="button clickable delete">Delete</div>
       </div>
     </div>
