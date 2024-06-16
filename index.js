@@ -1,90 +1,104 @@
-import { log } from "console";
+import { createClient } from "@supabase/supabase-js";
 import express from "express";
 import fs from "fs";
+import { title } from "process";
 
 const app = express();
 const port = 3000;
-var postsData;
 
-fs.readFile("public/Posts/db.json", "utf-8", (err, data) => {
-  if (err) throw err;
-  postsData = JSON.parse(data);
-});
+const SUPABASE_URL = "https://jjldjzqphicfdtyrfqpd.supabase.co";
+const SUPABASE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpqbGRqenFwaGljZmR0eXJmcXBkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTg0NTUzNzcsImV4cCI6MjAzNDAzMTM3N30.lGdVSQz9RaFpQZxm4v4ot_4IB6aGoTrWyQeCKAaWe2Y";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function BlogPost(postTitle, postContent) {
-  let set = false;
-  while (!set) {
-    set = true;
-    let newId = Math.ceil(Math.random() * 1000000);
-    postsData.forEach((post) => {
-      if (post["id"] === newId) {
-        set = false;
-      }
-    });
-    if (set) {
-      this.id = newId;
-    }
+async function loadPosts() {
+  let { data: postsdata, error } = await supabase.from("postsdata").select("*");
+
+  if (error) {
+    console.error("Supabase insert error:", error);
+    return;
+  } else {
+    return postsdata;
   }
-  this.title = postTitle;
-  this.content = postContent;
-  this.karma = 0;
 }
 
-function savePostsData() {
-  console.log("saving");
-  let jsonString = JSON.stringify(postsData);
-  console.log(jsonString);
-  fs.writeFile("public/Posts/db.json", jsonString, (err) => {
-    if (err) {
-      console.error("Failed to save posts data:", err);
-    } else {
-      console.log("Posts have been saved");
+async function findPost(id) {
+  let { data: postsdata, error } = await supabase
+    .from("postsdata")
+    .select("*")
+    .eq("id", id);
+  return postsdata;
+}
+
+async function newId() {
+  let newId;
+  let searching = true;
+  while (searching) {
+    newId = Math.ceil(Math.random() * 1000000);
+    let existingPost = await findPost(newId);
+    if (!existingPost[0]) {
+      searching = false;
     }
-  });
+  }
+  return newId;
 }
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/submit", (req, res) => {
-  let newPost = new BlogPost(req.body["postTitle"], req.body["postBody"]);
-  postsData.unshift(newPost);
-  savePostsData();
+app.post("/submit", async (req, res) => {
+  let newPost = {
+    id: await newId(),
+    title: req.body.postTitle,
+    content: req.body.postBody,
+    created: new Date(),
+    author: "Matejosz"
+  };
+  const { data, error } = await supabase
+  .from('postsdata')
+  .insert([newPost,])
+  .select();
+
+  if (error) {
+    console.log(error);
+  }
+
   res.redirect("/");
 });
 
-app.post("/edit", (req, res) => {
+app.post("/edit", async (req, res) => {
   console.log(req.body);
-  postsData.forEach((post) => {
-    if (post["id"] == req.body["postID"]) {
-      post["title"] = req.body["postTitle"]
-      post["content"] = req.body["postBody"]
-    }
-  });
-  // let newPost = new BlogPost(req.body["postTitle"], req.body["postBody"]);
-  // postsData.unshift(newPost);
-  // savePostsData();
+
+  let updatePost = {
+    title: req.body["postTitle"],
+    content: req.body["postBody"],
+    edited: new Date()
+  }
+
+  const { data, error } = await supabase
+  .from('postsdata')
+  .update(updatePost)
+  .eq('id', req.body["postID"])
+  .select()
+
   res.redirect("/");
 });
 
-app.delete("/singlePost?", (req, res) => {
+app.delete("/singlePost?", async (req, res) => {
   console.log("Deleting..." + req.query["id"]);
-  postsData.forEach((element, i) => {
-    if (element["id"] == req.query["id"]) {
-      postsData.splice(i, 1);
-    }
-  });
-  savePostsData();
+  
+  const { error } = await supabase
+  .from('postsdata')
+  .delete()
+  .eq('id', req.query["id"]);
+
+  res.redirect("/");
 });
 
-app.get("/singlePost?", (req, res) => {
-  let postData;
-  postsData.forEach((element) => {
-    if (element["id"] == req.query["id"]) {
-      postData = element;
-    }
-  });
-  res.render("singlePost.ejs", { post: postData });
+app.get("/singlePost?", async (req, res) => {
+  let postData = await findPost(req.query["id"]);
+
+  res.render("singlePost.ejs", { post: postData[0] });
 });
 
 app.get("/about", (req, res) => {
@@ -95,20 +109,18 @@ app.get("/post", (req, res) => {
   res.render("post.ejs");
 });
 
-app.get("/editPost?", (req, res) => {
-  let postData;
-  postsData.forEach((element) => {
-    if (element["id"] == req.query["id"]) {
-      postData = element;
-    }
-  });
-  res.render("post.ejs", { post: postData });
+app.get("/editPost?", async (req, res) => {
+  let postData = await findPost(req.query["id"]);
+
+  res.render("post.ejs", { post: postData[0] });
 });
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  let postsData = await loadPosts();
   res.render("index.ejs", { posts: postsData });
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  loadPosts();
+  console.log(`Server is running on http://localhost:${port}`);
 });
